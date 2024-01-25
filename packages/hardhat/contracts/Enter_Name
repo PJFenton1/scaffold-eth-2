@@ -1,0 +1,60 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.0 <0.9.0;
+
+// Declare an interface to define the functions for setting and getting data
+interface UserDataInterface {
+    function setInformation(string memory _newFirstName, string memory _newLastName) external;
+    function getFirstName() external view returns (string memory);
+    function getLastName() external view returns (string memory);
+    
+}
+
+// Declare an interface for setting up a password
+interface UserMercuryPassword{
+    function setPassword(string memory newPassword) external;
+
+}
+
+// Declare a contract that implements the user interface
+contract UserDataContract is UserDataInterface {
+    
+    struct MercuryUser{
+        string firstName;
+        string lastName;
+        
+    }
+
+    MercuryUser public mercuryUser; 
+    
+    address owner;
+    
+    // Implement the interface's setinformation function
+    function setInformation(string memory _newFirstName, string memory _newLastName) public override {
+        
+        mercuryUser = MercuryUser(_newFirstName, _newLastName);
+
+    }
+
+    // Implement the each of the interfaces's function
+    function getFirstName() public view override returns (string memory) {
+        return mercuryUser.firstName;
+    }
+
+    function getLastName() public view override returns (string memory) {
+        return mercuryUser.lastName;
+    }
+
+
+    // Modifier to restrict access to the owner
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can access this function.");
+        _; // Continue executing the function if the condition is met
+    }
+
+    //Allow applicant to see information
+    function viewInfo() public view onlyOwner returns(MercuryUser memory) {
+        return mercuryUser;
+    }
+   
+}
+
